@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FDP Certificate Verification | Agnel Polytechnic, Vashi</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(to right, #eef2f3, #8e9eab);
+    text-align: center;
+    padding: 50px;
+  }
+  .container {
+    max-width: 520px;
+    margin: auto;
+    background: #fff;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+  h2 {
+    color: #0d47a1;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #333;
+  }
+  input {
+    width: 80%;
+    padding: 12px;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  button {
+    padding: 10px 25px;
+    background-color: #0d47a1;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 15px;
+  }
+  button:hover {
+    background-color: #083170;
+  }
+  #result {
+    margin-top: 25px;
+    font-size: 16px;
+  }
+  .error {
+    color: #d32f2f;
+  }
+  .success {
+    color: #2e7d32;
+  }
+  footer {
+    margin-top: 40px;
+    font-size: 13px;
+    color: #444;
+  }
+  footer a {
+    color: #0d47a1;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>FDP Certificate Verification</h2>
+    <p>Organized by <b>Agnel Polytechnic, Vashi</b><br>
+    In collaboration with <b>Mindscript Technologies</b></p>
+
+    <hr style="margin: 20px 0;">
+    <p>Enter your unique certificate number:</p>
+
+    <input type="text" id="certNumber" placeholder="e.g., FDP2025-001" />
+    <br />
+    <button onclick="verifyCertificate()">Verify</button>
+
+    <div id="result"></div>
+
+    <footer>
+      <p>For any queries, contact:<br>
+      Mrs. Kirti Karande – 7045014174 <br>
+      Mr. Mohd Janisar – 9559299559</p>
+    </footer>
+  </div>
+
+  <script>
+    async function verifyCertificate() {
+      const input = document.getElementById("certNumber").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!input) {
+        resultDiv.innerHTML = '<p class="error">Please enter a certificate number.</p>';
+        return;
+      }
+
+      resultDiv.innerHTML = "Checking...";
+
+      try {
+        const response = await fetch("certificates.json");
+        const data = await response.json();
+        const cert = data.find(c => c.id.toLowerCase() === input.toLowerCase());
+
+        if (cert) {
+          resultDiv.innerHTML = `
+            <p class="success">✅ Certificate verified for <b>${cert.name}</b></p>
+            <a href="${cert.file}" download>
+              <button>Download Certificate</button>
+            </a>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <p class="error">❌ Invalid or unavailable certificate.<br>
+            Please contact the coordinator.</p>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">⚠️ Error fetching certificate data.<br>
+          Please try again later.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
